@@ -6,7 +6,7 @@ module SecureConf
     attr_reader :storage
     attr_accessor :auto_commit
 
-    def initialize(path, encripter: nil, serializer: nil, storage: nil, auto_commit: true)
+    def initialize(path, encripter: nil, serializer: nil, storage: nil, auto_commit: false)
       @path = path
       @encripter = encripter || SecureConf.default
       @serializer = serializer || Serializer::Marshal
