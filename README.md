@@ -22,9 +22,15 @@ Or install it yourself as:
 
     path = File.expand_path("config.yml", File.dirname(__FILE__))
     config = SecureConf::Config.new(path)
-    p config["enc:aaa"]
-    config["enc:aaa"] = "aaa"
+    
+    config["enc:id"] = "yoshida-eth0"
+    config["enc:pass"] = "himitsu"
+    config["last_access"] = Time.now.to_s
     config.save
+    
+    p config["enc:id"]
+    p config["enc:pass"]
+    p config["last_access"]
 
 
 ## Development
