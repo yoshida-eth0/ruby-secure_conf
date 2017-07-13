@@ -2,11 +2,6 @@ require "yaml"
 
 module SecureConf
   module Storage
-    def self.fetch(path)
-      ext = File.extname(path).sub(".", "").capitalize
-      const_get(ext)
-    end
-
     module Yaml
       def self.load(path)
         if File.file?(path)

@@ -1,5 +1,7 @@
+require 'delegate'
+
 module SecureConf
-  class Config < Hash
+  class Config < SimpleDelegator
     attr_reader :path
     attr_reader :encripter
     attr_reader :serializer
@@ -12,10 +14,20 @@ module SecureConf
       @serializer = serializer || Serializer::Marshal
       @storage = storage || Storage.fetch(path)
       @auto_commit = auto_commit
-      self.replace(@storage.load(path))
+      super(@storage.load(path))
     end
 
-    alias_method :plain_store, :store
+    # store
+
+    def plain_store(key, value)
+      __getobj__.store(key, value)
+      save if @auto_commit
+    end
+
+    def secure_store(key, value)
+      value = @serializer.dump(value)
+      plain_store(key, @encripter.encrypt(value))
+    end
 
     def store(key, value)
       if key.to_s.start_with?("enc:")
@@ -26,12 +38,11 @@ module SecureConf
     end
     alias_method :[]=, :store
 
-    def secure_store(key, value)
-      value = @serializer.dump(value)
-      plain_store(key, @encripter.encrypt(value))
-    end
+    # get
 
-    alias_method :plain_get, :[]
+    def plain_get(key)
+      __getobj__[key]
+    end
 
     def [](key)
       value = plain_get(key)
@@ -42,8 +53,17 @@ module SecureConf
       value
     end
 
+    # delete
+
+    def delete(key)
+      __getobj__.delete(key)
+      save if @auto_commit
+    end
+
+    # save
+
     def save
-      @storage.save(path, self)
+      @storage.save(path, __getobj__)
     end
   end
 end
