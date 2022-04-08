@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-    path = File.expand_path("config.yml", File.dirname(__FILE__))
+    path = File.expand_path("secure.yml", File.dirname(__FILE__))
     config = SecureConf::Config.new(path)
     
     config["enc:id"] = "yoshida-eth0"
