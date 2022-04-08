@@ -32,6 +32,21 @@ Or install it yourself as:
     p config["enc:pass"]
     p config["last_access"]
 
+## Usage cli
+
+    % secure_conf.rb read enc:pass
+    read
+      key: enc:pass
+      val: himitsu
+
+    % secure_conf.rb --help
+    Usage: secure_conf.rb [options] method [arguments]...
+            --pkey privatekey_path       PrivateKey file path (default: ~/.ssh/id_rsa)
+            --storage storage_path       Storage file path (default: ./secure.yml)
+      methods usage:
+        secure_conf.rb [options] read key
+        secure_conf.rb [options] write key value
+        secure_conf.rb [options] delete key
 
 ## Development
 
