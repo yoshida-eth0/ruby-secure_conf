@@ -1,10 +1,11 @@
 require 'openssl'
 require 'base64'
+require 'secure_conf/openssh'
 
 module SecureConf
   class Encrypter
     def initialize(pkey=nil, pass=nil)
-      pkey ||= "~/.ssh/id_rsa"
+      pkey ||= File.open(File.expand_path("~/.ssh/id_rsa"), "r") {|f| f.read }
       self.pkey = [pkey, pass]
     end
 
@@ -13,15 +14,22 @@ module SecureConf
 
       case pk
       when OpenSSL::PKey::RSA
+        # OpenSSL private key object
         @pkey = pk
+      when OpenSSH::PKey
+        # OpenSSH private key object
+        @pkey = pk.to_openssl
       when String
-        pk2 = File.expand_path(pk)
-        if File.file?(pk2) && File.readable?(pk2)
-          pk = File.read(pk2)
+        pk = pk.strip
+        if pk.start_with?("-----BEGIN OPENSSH PRIVATE KEY-----") && pk.end_with?("-----END OPENSSH PRIVATE KEY-----")
+          # OpenSSH private pem string
+          @pkey = OpenSSH::PKey.new(pk).to_openssl
+        else
+          # OpenSSL private pem string
+          @pkey = OpenSSL::PKey::RSA.new(pk, pass)
         end
-
-        @pkey = OpenSSL::PKey::RSA.new(pk, pass)
       when Integer
+        # generate
         @pkey = OpenSSL::PKey::RSA.new(pk)
       end
     end
