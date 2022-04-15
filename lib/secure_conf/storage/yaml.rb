@@ -14,7 +14,9 @@ module SecureConf
       def self.save(path, obj)
         h = {}
         h.replace(obj)
-        YAML.dump(h, File.open(path, "w"))
+        File.open(path, "w") {|f|
+          YAML.dump(h, f)
+        }
       end
     end
     Yml = Yaml

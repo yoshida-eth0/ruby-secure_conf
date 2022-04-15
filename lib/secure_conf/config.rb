@@ -3,14 +3,14 @@ require 'delegate'
 module SecureConf
   class Config < SimpleDelegator
     attr_reader :path
-    attr_reader :encripter
+    attr_reader :encrypter
     attr_reader :serializer
     attr_reader :storage
     attr_accessor :auto_commit
 
-    def initialize(path, encripter: nil, serializer: nil, storage: nil, auto_commit: false)
+    def initialize(path, encrypter: nil, serializer: nil, storage: nil, auto_commit: false)
       @path = path
-      @encripter = encripter || SecureConf.default
+      @encrypter = encrypter || SecureConf.default
       @serializer = serializer || Serializer::Marshal
       @storage = storage || Storage.fetch(path)
       @auto_commit = auto_commit
@@ -26,7 +26,7 @@ module SecureConf
 
     def secure_store(key, value)
       value = @serializer.dump(value)
-      plain_store(key, @encripter.encrypt(value))
+      plain_store(key, @encrypter.encrypt(value))
     end
 
     def store(key, value)
@@ -47,7 +47,7 @@ module SecureConf
     def [](key)
       value = plain_get(key)
       if value && key.to_s.start_with?("enc:")
-        value = @encripter.decrypt(value)
+        value = @encrypter.decrypt(value)
         value = @serializer.load(value)
       end
       value

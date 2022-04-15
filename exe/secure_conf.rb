@@ -24,7 +24,7 @@ class SecureConfCmd
 
       pkey = File.open(@privatekey_path, "r") {|f| f.read}
 
-      @config = SecureConf::Config.new(@storage_path, encripter: SecureConf::Encrypter.new(pkey), auto_commit: true)
+      @config = SecureConf::Config.new(@storage_path, encrypter: SecureConf::Encrypter.new(pkey), auto_commit: true)
     end
     @config
   end

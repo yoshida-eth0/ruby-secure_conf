@@ -12,7 +12,7 @@ module SecureConf
           # pem string
           @h = parse_pem(source)
 
-        elsif IO===source
+        elsif IO===source || source.respond_to?(:read)
           # pem io
           source = source.read
           @h = parse_pem(source)
@@ -269,7 +269,7 @@ module SecureConf
           exponent1 = d % (p - 1)
           exponent2 = d % (q - 1)
 
-          sequence = OpenSSL::ASN1::Sequence.new([
+          OpenSSL::ASN1::Sequence.new([
             OpenSSL::ASN1::Integer.new(0),
             OpenSSL::ASN1::Integer.new(h[:privatekey][:n].unpack("H*")[0].to_i(16)),
             OpenSSL::ASN1::Integer.new(h[:privatekey][:e].unpack("H*")[0].to_i(16)),
